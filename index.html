@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世新大學空堂生存地圖 SHU SPOT FINDER</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#0369a1',
+                        },
+                        rpg: {
+                            gold: '#d97706',
+                            purple: '#9333ea',
+                            green: '#059669',
+                            red: '#dc2626',
+                            blue: '#2563eb',
+                            card: '#ffffff',
+                            border: '#e2e8f0'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modern light theme custom scrollbar & hover styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .rpg-card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .rpg-card-hover:hover {
+            transform: translateY(-4px);
+            border-color: #38bdf8;
+            box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.12);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col justify-between">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 border-b border-slate-200/80 glass-panel shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-sky-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid font-mono text-lg font-black">S</i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-wider text-slate-900 flex items-center gap-2">
+                        世新大學空堂生存地圖
+                        <span class="text-xs font-mono font-medium text-brand-600 bg-brand-50 border border-brand-200 px-2 py-0.5 rounded-full">v2.5 Light</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 hidden sm:block tracking-widest uppercase">SHU Free-Time Spot Guide</p>
+                </div>
+            </div>
+
+            <!-- Player Status Badge -->
+            <div class="flex items-center space-x-2 bg-white border border-slate-200 px-3.5 py-1.5 rounded-full text-xs font-mono shadow-sm">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span class="text-slate-500 hidden md:inline">狀態:</span>
+                <span class="text-emerald-600 font-bold">空堂探索中 (FREE TIME)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        
+        <!-- Hero Section -->
+        <section class="mb-8">
+            <div class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-sky-100 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <div class="inline-flex items-center gap-1.5 text-xs text-amber-700 font-mono bg-amber-50 px-2.5 py-1 rounded-md mb-3 border border-amber-200">
+                        <i class="fa-solid fa-compass text-amber-500"></i> 世新大學空堂攻略副本指南
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+                        下課去哪裡？選擇你的最佳據點
+                    </h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        精選校園內適合空堂造訪的熱門與隱藏角落。快速掌握路線難度、安靜度、網路狀態與社恐自在度，找到最適合你的休憩地點！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Filters -->
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-mono uppercase text-slate-500 tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-brand-500"></i> 屬性篩選 (Quest Filters)
+                </h3>
+                <span id="spot-count" class="text-xs font-mono text-slate-500">顯示 6 / 6 個探索點</span>
+            </div>
+            
+            <div class="flex flex-wrap gap-2" id="filter-container">
+                <button data-filter="all" class="filter-btn active bg-brand-500 hover:bg-brand-600 text-white border-brand-500 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border shadow-sm">
+                    <i class="fa-solid fa-border-all"></i> 全部地點
+                </button>
+                <button data-filter="food" class="filter-btn bg-white hover:bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border shadow-sm">
+                    <span>🍱</span> 可以吃飯
+                </button>
+                <button data-filter="quiet" class="filter-btn bg-white hover:bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border shadow-sm">
+                    <span>🔇</span> 絕對安靜
+                </button>
+                <button data-filter="study" class="filter-btn bg-white hover:bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border shadow-sm">
+                    <span>⚡</span> 適合讀書/充電
+                </button>
+                <button data-filter="relax" class="filter-btn bg-white hover:bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 border shadow-sm">
+                    <span>🎮</span> 娛樂放鬆
+                </button>
+            </div>
+        </section>
+
+        <!-- Spots Grid -->
+        <section id="spots-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards generated dynamically via JavaScript -->
+        </section>
+
+    </main>
+
+    <!-- Modal Popup for Detail Strategy -->
+    <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-xl p-6 relative transform scale-95 transition-all duration-300" id="modal-content">
+            <!-- Modal Close Button -->
+            <button id="close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div id="modal-header" class="mb-4 pr-6">
+                <!-- Injected via JS -->
+            </div>
+
+            <hr class="border-slate-100 my-4">
+
+            <!-- Modal Body Details -->
+            <div id="modal-body" class="space-y-4">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                <button id="modal-close-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2 rounded-xl text-sm font-medium transition">
+                    關閉攻略
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimalist Footer -->
+    <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© 世新大學空堂生存指南 SHU Spot Finder. 明亮簡約版.</p>
+            <p class="font-mono text-slate-400">DESIGNED FOR SHU STUDENTS</p>
+        </div>
+    </footer>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Data Source: Spots Information
+        const spotsData = [
+            {
+                id: 'lib-6f',
+                name: '圖書館 6 樓影音休憩區',
+                title: '遊戲與 KTV 多媒體副本',
+                category: ['relax', 'study'],
+                complexity: 2, // 1-5
+                quietness: 3, // 1-5
+                wifiPower: '⚡⚡⚡ 滿格 (提供插座/Wi-Fi)',
+                foodAllowed: '❌ 僅限蓋緊水壺/飲料',
+                soloLevel: 5, // 自在度 1-5
+                buffs: ['🎮 PS5/Switch 遊戲區', '🎤 電話亭 KTV', '❄️ 舒適冷氣', '🛋️ 單人放鬆沙發'],
+                tags: ['多媒體設施', '免費預約', '紓壓放鬆'],
+                locationDesc: '圖書館搭電梯直達 6 樓影音區',
+                strategy: '個人影音包廂與 PS5/Switch 遊戲體驗區需持學生證至櫃檯登記。熱門時段容易客滿，建議空堂一開始就前往預約！個人電話亭 KTV 更是免費開唱紓壓的好地方。',
+                itemsSuggested: ['學生證 (必備)', '個人耳機', '帶蓋水壺']
+            },
+            {
+                id: 'shewo-r800',
+                name: '舍我樓 R800 24H 讀書室',
+                title: '24 小時極靜死守衝刺區',
+                category: ['quiet', 'study'],
+                complexity: 1,
+                quietness: 5,
+                wifiPower: '⚡⚡⚡ 穩定 (校園 Wi-Fi/插座)',
+                foodAllowed: '❌ 嚴禁飲食',
+                soloLevel: 5,
+                buffs: ['🔇 絕對安靜', '💡 獨立桌燈', '🔌 專屬插座', '❄️ 全天候冷氣'],
+                tags: ['24H開放', '考前衝刺', '獨立K書'],
+                locationDesc: '舍我樓 R 棟 8 樓 R800 室',
+                strategy: '掉下一根針都能聽見的絕對靜音空間！每人皆有獨立隔板與專屬插座，肅殺讀書氣氛滿點。極度適合需要專注準備考試、寫論文或爆肝刷題的時刻。',
+                itemsSuggested: ['筆電/講義', '充電器', '保暖薄外套']
+            },
+            {
+                id: 'cave-plaza',
+                name: '山洞口廣場 / 學生活動中心',
+                title: '熱鬧補給與社交大廳',
+                category: ['food', 'relax'],
+                complexity: 1,
+                quietness: 1,
+                wifiPower: '⚡⚡ 訊號良好 (4G/5G)',
+                foodAllowed: '⭕ 允許大快朵頤',
+                soloLevel: 2,
+                buffs: ['🍱 鄰近美食街', '🧋 買手搖方便', '👥 適合揪團聚會', '🌬️ 半戶外通風'],
+                tags: ['吃午餐', '熱鬧活潑', '社團練舞'],
+                locationDesc: '校門口山洞口進來後之中央廣場',
+                strategy: '校園心臟地帶，經常有社團練舞與活動。非常適合買午餐外帶、手搖飲在此與朋友聊天。氣氛熱鬧，不適合需要極度安靜讀書或補眠的場合。',
+                itemsSuggested: ['外帶餐點', '遮陽裝備']
+            },
+            {
+                id: 'speech-plaza',
+                name: '言論廣場 (小巨蛋 / 涼亭區)',
+                title: '戶外微風短空堂放空區',
+                category: ['relax', 'food'],
+                complexity: 1,
+                quietness: 2,
+                wifiPower: '⚡⚡ 普通 (校園 Wi-Fi)',
+                foodAllowed: '⭕ 允許飲食 (外帶小吃)',
+                soloLevel: 4,
+                buffs: ['🌿 自然採光微風', '☕ 適合喝咖啡', '🪑 長椅休憩', '📱 適合滑手機'],
+                tags: ['短暫空堂', '戶外透透氣', '陽光充足'],
+                locationDesc: '校門進入後正中央言論廣場涼亭及階梯',
+                strategy: '只有 20~40 分鐘短空堂時的最佳去處。天氣晴朗時坐在涼亭看風景、吃點心或刷手機相當愜意。春秋季節尤為舒適。',
+                itemsSuggested: ['手搖飲料', '行動電源']
+            },
+            {
+                id: 'lib-study',
+                name: '圖書館 2F-5F 閱覽自習區',
+                title: '經典舒適 K 書專區',
+                category: ['quiet', 'study'],
+                complexity: 2,
+                quietness: 4,
+                wifiPower: '⚡⚡⚡ 極佳 (專屬插座/強大Wi-Fi)',
+                foodAllowed: '❌ 僅限水/蓋緊飲料',
+                soloLevel: 5,
+                buffs: ['📚 藏書豐富', '🪑 舒適閱覽桌', '🔌 插座充裕', '💡 光線充足'],
+                tags: ['圖書館', '查資料', '寫報告'],
+                locationDesc: '圖書館 2 樓至 5 樓各層閱覽區',
+                strategy: '比起 R800 稍微輕鬆一點但依然安靜，桌面寬敞適合攤開書籍與筆電做報告。靠窗座位採光優美，是常態性自習的第一選擇。',
+                itemsSuggested: ['學生證', '筆電', '筆記本']
+            },
+            {
+                id: 'jian-ming-corridor',
+                name: '簡明樓 / 通識中心廊道座椅',
+                title: '隱藏版極簡小歇角落',
+                category: ['relax', 'study'],
+                complexity: 3,
+                quietness: 4,
+                wifiPower: '⚡⚡ 普通 (校園 Wi-Fi)',
+                foodAllowed: '🔺 允許輕食/飲料',
+                soloLevel: 5,
+                buffs: ['🤫 人潮稀少', '🍃 陰涼安靜', '👤 獨行友善 100%', '🪑 質感休息長椅'],
+                tags: ['隱藏景點', '避開人潮', '獨處小憩'],
+                locationDesc: '簡明樓穿堂與通識教育中心廊道周邊',
+                strategy: '內行人限定的隱蔽小憩點！人流量少且環境清幽，不想去熱門景點人擠人時，來這裡讀書、聽音樂或發呆完全不會被打擾。',
+                itemsSuggested: ['耳機', '水壺']
+            }
+        ];
+
+        // Helper: Generate Star Rating String
+        function getStars(num) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= num) {
+                    stars += '<i class="fa-solid fa-star text-amber-400"></i>';
+                } else {
+                    stars += '<i class="fa-regular fa-star text-slate-300"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Helper: Generate Solo Index Indicator Bar
+        function getSoloBar(level) {
+            const percentage = (level / 5) * 100;
+            let color = 'bg-emerald-500';
+            let label = '極高 (獨自一人超自在)';
+            if (level <= 2) { label = '偏低 (較多一群人聚集)'; color = 'bg-amber-500'; }
+            else if (level <= 4) { label = '良好 (獨行族友善)'; color = 'bg-brand-500'; }
+
+            return `
+                <div class="w-full">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-500">自在度 / 社恐友善度</span>
+                        <span class="text-slate-700 font-mono font-medium">${level}/5 - ${label}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                        <div class="${color} h-2 rounded-full transition-all duration-300" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Spot Cards
+        function renderSpots(spots) {
+            const grid = document.getElementById('spots-grid');
+            const countElem = document.getElementById('spot-count');
+            
+            countElem.innerText = `顯示 ${spots.length} / ${spotsData.length} 個探索點`;
+            grid.innerHTML = '';
+
+            if (spots.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center border border-dashed border-slate-300 bg-white rounded-2xl">
+                        <i class="fa-solid fa-compass text-4xl text-slate-300 mb-3"></i>
+                        <p class="text-slate-500 font-medium">沒有找到符合條件的空堂探索點</p>
+                        <p class="text-xs text-slate-400 mt-1">請試著切換其他篩選標籤</p>
+                    </div>
+                `;
+                return;
+            }
+
+            spots.forEach(spot => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-slate-200/90 rounded-2xl p-5 rpg-card-hover flex flex-col justify-between relative cursor-pointer shadow-sm group';
+                
+                // Tags HTML
+                const tagsHtml = spot.tags.map(t => `<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded border border-slate-200">${t}</span>`).join(' ');
+                
+                // Buff Badges
+                const buffsHtml = spot.buffs.slice(0, 3).map(b => `
+                    <span class="bg-sky-50 text-sky-700 text-xs px-2.5 py-1 rounded-md border border-sky-200 font-mono font-medium">
+                        ${b}
+                    </span>
+                `).join('');
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Header / Title -->
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-[10px] font-mono text-brand-600 font-bold tracking-wider uppercase block mb-0.5">LOCATION SPOT</span>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors flex items-center gap-1.5">
+                                    ${spot.name}
+                                </h3>
+                            </div>
+                            <span class="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg border border-amber-200/80 font-mono font-medium">
+                                ${spot.title}
+                            </span>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            ${tagsHtml}
+                        </div>
+
+                        <!-- Attributes Rating Table -->
+                        <div class="space-y-2.5 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70 text-xs mb-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-map-signs text-slate-400 w-4"></i> 路線複雜度
+                                </span>
+                                <span class="font-mono">${getStars(spot.complexity)}</span>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-volume-xmark text-slate-400 w-4"></i> 安靜度等級
+                                </span>
+                                <span class="font-mono">${getStars(spot.quietness)}</span>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plug text-slate-400 w-4"></i> 網路 / 插座
+                                </span>
+                                <span class="text-slate-700 font-medium truncate max-w-[160px] text-right">${spot.wifiPower.split(' ')[0]} ${spot.wifiPower.split(' ')[1] || ''}</span>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-utensils text-slate-400 w-4"></i> 可否用餐
+                                </span>
+                                <span class="font-medium ${spot.foodAllowed.includes('⭕') ? 'text-emerald-600' : 'text-slate-600'}">${spot.foodAllowed}</span>
+                            </div>
+
+                            <!-- Solo Bar -->
+                            <div class="pt-1">
+                                ${getSoloBar(spot.soloLevel)}
+                            </div>
+                        </div>
+
+                        <!-- Buffs List -->
+                        <div class="mb-4">
+                            <span class="text-[11px] font-mono text-slate-400 font-semibold block mb-1.5">副本特典 (BUFFS):</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${buffsHtml}
+                                ${spot.buffs.length > 3 ? `<span class="text-xs text-slate-400 self-center font-mono">+${spot.buffs.length - 3}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button class="w-full mt-2 bg-slate-100 hover:bg-brand-500 text-slate-700 hover:text-white py-2 px-4 rounded-xl text-xs font-semibold tracking-wider transition-all duration-200 flex items-center justify-center gap-2 border border-slate-200 group-hover:border-brand-500 shadow-sm">
+                        <i class="fa-solid fa-book-open"></i> 查看生存攻略 (GUIDE)
+                    </button>
+                `;
+
+                // Click event to open Modal
+                card.addEventListener('click', () => openModal(spot));
+                grid.appendChild(card);
+            });
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('detail-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        function openModal(spot) {
+            const modalHeader = document.getElementById('modal-header');
+            const modalBody = document.getElementById('modal-body');
+
+            modalHeader.innerHTML = `
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-mono bg-brand-50 text-brand-600 border border-brand-200 px-2 py-0.5 rounded font-medium">
+                        ${spot.title}
+                    </span>
+                    <span class="text-xs text-slate-400 font-mono">ID: ${spot.id}</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    ${spot.name}
+                </h2>
+                <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                    <i class="fa-solid fa-location-dot text-brand-500"></i> ${spot.locationDesc}
+                </p>
+            `;
+
+            const itemsHtml = spot.itemsSuggested.map(item => `
+                <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1 font-medium">
+                    <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> ${item}
+                </span>
+            `).join('');
+
+            const allBuffs = spot.buffs.map(b => `
+                <span class="bg-sky-50 text-sky-700 text-xs px-2.5 py-1 rounded-lg border border-sky-200 font-mono font-medium">
+                    ${b}
+                </span>
+            `).join('');
+
+            modalBody.innerHTML = `
+                <!-- Strategy Box -->
+                <div class="bg-amber-50 border border-amber-200/80 p-4 rounded-xl">
+                    <h4 class="text-xs font-mono font-bold text-amber-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> 玩家攻略建議 (STRATEGY)
+                    </h4>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        ${spot.strategy}
+                    </p>
+                </div>
+
+                <!-- Attributes Detailed Breakdown -->
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 block mb-1">插座與網路強度</span>
+                        <span class="text-slate-800 font-medium">${spot.wifiPower}</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 block mb-1">飲食規定</span>
+                        <span class="text-slate-800 font-medium">${spot.foodAllowed}</span>
+                    </div>
+                </div>
+
+                <!-- All Buffs -->
+                <div>
+                    <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">獲得 Buff 效果</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${allBuffs}
+                    </div>
+                </div>
+
+                <!-- Recommended Items -->
+                <div>
+                    <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">建議攜帶裝備 (EQUIPMENT)</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${itemsHtml}
+                    </div>
+                </div>
+            `;
+
+            // Display modal with animation
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            document.body.style.overflow = '';
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modalCloseBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Filter Functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active style from all
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-brand-500', 'text-white', 'border-brand-500', 'shadow-sm');
+                    b.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+                });
+
+                // Add active style to clicked button
+                btn.classList.add('active', 'bg-brand-500', 'text-white', 'border-brand-500', 'shadow-sm');
+                btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+
+                const filter = btn.getAttribute('data-filter');
+
+                if (filter === 'all') {
+                    renderSpots(spotsData);
+                } else {
+                    const filtered = spotsData.filter(spot => spot.category.includes(filter));
+                    renderSpots(filtered);
+                }
+            });
+        });
+
+        // ESC Key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Initial Render
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSpots(spotsData);
+        });
+    </script>
+</body>
+</html>
